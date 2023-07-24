@@ -7,9 +7,9 @@
 
 import Foundation
 
-struct Hand {
+class Hand {
     var cards = [Card]()
-    mutating func addCard(card: Card) {
+    func addCard(card: Card) {
         cards.append(card)
     }
 }
@@ -26,14 +26,18 @@ struct Blackjack {
         deck.shuffle()
     }
     
-    var playerHand = Hand()
-    var opponentHand = Hand()
+    private(set) var playerHand = Hand()
+    private(set) var opponentHand = Hand()
+    
+    mutating func dealCard(to hand: Hand) {
+        hand.addCard(card: deck.remove(at: 0))
+    }
     
     init() {
         makeDeck()
         for _ in 0..<2 {
-            playerHand.addCard(card: deck.remove(at: 0))
-            opponentHand.addCard(card: deck.remove(at: 0))
+            dealCard(to: playerHand)
+            dealCard(to: opponentHand)
         }
     }
 }

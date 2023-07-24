@@ -16,35 +16,36 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var opponentScoreTitle: UILabel! {
         didSet {
-            opponentScoreTitle.text = "Opponent: \(opponentScore)"
+            updateOpponentScoreLabel()
         }
     }
     @IBOutlet weak var playerScoreTitle: UILabel! {
         didSet {
-            playerScoreTitle.text = "You: \(playerScore)"
+            updatePlayerScoreLabel()
         }
     }
     var playerScore: Int {
-        get {
-            return game.playerHand.cards.reduce(0) { $0 + $1.rank.blackjackValue() }
-        }
-        set {
-            playerScoreTitle.text = "You: \(newValue)"
-        }
+        return game.playerHand.cards.reduce(0) { $0 + $1.rank.blackjackValue() }
     }
     var opponentScore: Int {
-        get {
-            return game.opponentHand.cards.reduce(0) { $0 + $1.rank.blackjackValue() }
-        }
-        set {
-            opponentScoreTitle.text = "Opponent: \(newValue)"
-        }
+        return game.opponentHand.cards.reduce(0) { $0 + $1.rank.blackjackValue() }
+    }
+    func updatePlayerScoreLabel() {
+        playerScoreTitle.text = "You: \(playerScore)"
+    }
+    func updateOpponentScoreLabel() {
+        opponentScoreTitle.text = "Opponent: \(opponentScore)"
     }
     
     @IBAction func sitButtonPressed(_ sender: UIButton) {
+        game.dealCard(to: game.opponentHand)
+        updateViewFromModel()
     }
     
     @IBAction func hitButtonPressed(_ sender: UIButton) {
+        game.dealCard(to: game.playerHand)
+        game.dealCard(to: game.opponentHand)
+        updateViewFromModel()
     }
     
     @IBAction func startGameButtonPressed(_ sender: UIButton) {
@@ -63,10 +64,19 @@ class ViewController: UIViewController {
         for index in game.playerHand.cards.indices {
             playerCardImageViews[index].image = UIImage(named: game.playerHand.cards[index].description)
             playerCardImageViews[index].isHidden = false
+            updatePlayerScoreLabel()
         }
         for index in game.opponentHand.cards.indices {
             opponentCardImageViews[index].image = UIImage(named: game.opponentHand.cards[index].description)
             opponentCardImageViews[index].isHidden = false
+            updateOpponentScoreLabel()
+        }
+        if playerScore > 21 && opponentScore > 21 {
+            // Draw
+        } else if playerScore > 21 {
+            // Lose
+        } else if opponentScore > 21 {
+            // Win
         }
     }
     
